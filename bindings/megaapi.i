@@ -226,8 +226,8 @@ extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 
 
 //Make the "delete" method protected
-%typemap(javadestruct, methodname="delete", methodmodifiers="protected synchronized") SWIGTYPE 
-{   
+%typemap(javadestruct, methodname="delete", methodmodifiers="protected synchronized") SWIGTYPE
+{
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
         swigCMemOwn = false;
@@ -251,9 +251,9 @@ extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 #if SWIG_VERSION < 0x030000
 %typemap(directorargout) (const char *time, int loglevel, const char *source, const char *message)
 %{
-	jenv->DeleteLocalRef(jtime); 
+	jenv->DeleteLocalRef(jtime);
 	jenv->DeleteLocalRef(jsource);
-	jenv->DeleteLocalRef(jmessage); 
+	jenv->DeleteLocalRef(jmessage);
 %}
 #endif
 
@@ -283,19 +283,19 @@ extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 
 #if SWIG_VERSION < 0x030000
 %typemap(directorargout) (const char* path)
-%{ 
-	jenv->DeleteLocalRef(jpath); 
+%{
+	jenv->DeleteLocalRef(jpath);
 %}
 #endif
 
 %apply (char *STRING, size_t LENGTH) {(char *bitmapData, size_t size)};
 %typemap(directorin, descriptor="[B") (char *bitmapData, size_t size)
-%{ 
+%{
 	jbyteArray jb = (jenv)->NewByteArray($2);
 	$input = jb;
 %}
 %typemap(directorargout) (char *bitmapData, size_t size)
-%{ 
+%{
 	jenv->GetByteArrayRegion($input, 0, $2, (jbyte *)$1);
 	jenv->DeleteLocalRef($input);
 %}
@@ -336,6 +336,13 @@ extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
 %rename ("$ignore", fullname=1) mega::MegaApi::createAccount(const char*, const char*, const char*);
 
 #endif
+
+#ifdef SWIGPYTHON
+%typemap(directorin) (char *buffer, size_t size)
+%{
+  $input = PyByteArray_FromStringAndSize($1, $2);
+%}
+#endif // SWIGPYTHON
 
 %ignore mega::MegaApi::MEGA_DEBRIS_FOLDER;
 %ignore mega::MegaNode::getNodeKey;
